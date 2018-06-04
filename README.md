@@ -94,7 +94,7 @@ This will first attempt to fit using letter-spacing, then try font-stretch, then
 ## font-variation-settings
 
 It is quite possible to write fit-to-width functions using `font-variation-settings`. Indeed the [Axis-Praxis fit-to-width](https://www.axis-praxis.org/playground/) demos all use 
-font-variation-settings. It would be add handling for font-variation-settings, ideally while not affecting other axis values.
+font-variation-settings. It would be good to add handling for font-variation-settings, ideally while not affecting other axis values.
 
 ## Performance
 
