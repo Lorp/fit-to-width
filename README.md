@@ -100,7 +100,9 @@ font-variation-settings. It would be good to add handling for font-variation-set
 
 Performance is good since it uses binary search on `font-stretch` and `letter-spacing`. Iterations are limited to 50, in case the algorithm fails to converge.
 
-## Bugs
+## Issues
 
-Sometimes the font is not ready in time for a container’s `clientWidth` to be measured. Reloading usually solves the problem, but 
+* Sometimes the font is not ready in time for a container’s `clientWidth` to be measured. Reloading usually solves the problem, but 
 a solution is needed.
+
+* Unfortunately, letter-spacing is added to glyphs even if that glyph is last on a line. This means that when significant letter-spacing is used, we get white space, when we would prefer more letter-space and text aligning with the right margin.
