@@ -2,14 +2,22 @@
 <html>
 <head>
 
+<meta charset="UTF-8">
 <link rel="shortcut icon" href="">
 
-<script src="fit-to-width.js"></script>
+<script src="../fit-to-width.js"></script>
 
 <style>
+
 @font-face {
+	/* 
+	Fit Variable 
+	https://djr.com/fit
+
+	This document references a font that is licensed to Laurence Penney. Special permission has been granted to crosslink to it for demo purposes only. You must obtain an appropriate license at <https://djr.com/fit> before linking to this font or using it in any other context.
+	*/
 	font-family: Fit;
-	src: url(Fit-VF.ttf);
+	src: url(https://djr.com/fit/assets/Fit-Variable_Demo_Purposes_Only.woff2);
 }
 
 .ftw {
@@ -19,11 +27,19 @@
 	height: 1em;
 }
 
+.notice {
+	width: 600px;
+	border: 1px solid black;
+	padding: 12px;
+}
+
 </style>
 
 </head>
 
 <body>
+
+<button id="fit">Fit-to-width!</button>
 
 <div class="ftw">
 Here is 
@@ -47,10 +63,18 @@ Here is more textyyy Here is more textydshfsdk
 Here is more textyyy Here is more textyyy and again sdhfg skdhjfg sdkhjfgdsf
 </div>
 
+<p class="notice">This document references a font that is licensed to Laurence Penney. Special permission has been granted to crosslink to it for demo purposes only. You must obtain an appropriate license at <a href="https://djr.com/fit">djr.com/fit</a> before linking to this font or using it in any other context.</p>	
 
 <script>
 
-ftw_fit(document.getElementsByClassName("ftw"));
+document.fonts.ready.then(function () {
+
+	document.getElementById("fit").addEventListener("click", function () {
+
+		ftw_fit();
+
+	});
+});
 
 </script>
 
