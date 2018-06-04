@@ -34,6 +34,12 @@ function ftw_fit (elements, ftwConfigUser) {
 	let thisConfig = ftwConfigDefault;
 	let els;
 
+	// special case if parameter 0 is undefined or a string
+	if (elements === undefined)
+		elements = "ftw";
+	if (typeof elements === "string")
+		elements = document.getElementsByClassName(elements);
+
 	// if so, call the function for each object
 	if (ftw_ArgIsIterable(elements)) {
 		// ftw_fit();
