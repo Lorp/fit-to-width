@@ -24,7 +24,7 @@ By default the ftw_fit() function uses the following methods in this order:
 
 `ftw_fit ([ <elements> [, <config> ]])`
 
-### `elements`
+### _elements_
 
 The DOM elements we should process, for example those returned by `document.getElementsByClassName()` or jQuery’s `$()`. It can also take a single element, for example that returned by `document.getElementById()`.
 
@@ -32,7 +32,7 @@ If `elements` is a string, it uses an array of all DOM elements of the class wit
 
 If `elements` is undefined, it defaults to an array of all DOM elements of class `fit`. This is the simplest way to use ftw_fit(): just give your elements the class `fit` and then call ftw_fit().
 
-### `config`
+### _config_
 
 The `config` object is used to customize the operation of ftw_fit(). It has the following properties:
 
