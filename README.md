@@ -30,7 +30,7 @@ The DOM elements we should process, for example those returned by `document.getE
 
 If `elements` is a string, it uses an array of all DOM elements of the class with that name.
 
-If `elements` is undefined, it defaults to an array of all DOM elements of class `fit`. This is the simplest way to use ftw_fit(): just give your elements the class `fit` and then call ftw_fit().
+If `elements` is undefined, it defaults to an array of all DOM elements of class `ftw`. This is the easiest way to use ftw_fit(): just give your elements the class `ftw`, then call ftw_fit().
 
 ### _config_
 
