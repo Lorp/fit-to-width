@@ -1,6 +1,6 @@
 # fit-to-width.js
 
-fit-to-width.js is a small JavaScript library for fitting text into text containers in a typographically sensitive way, using standard CSS. To use the library, include the script at the top of your web page, then when your page and fonts are loaded, call `ftw_fit()`.
+fit-to-width.js is a small JavaScript library for fitting text into text containers in a typographically sensitive way, using standard CSS. To use the library, include the script at the top of your web page, assign the class `ftw` to the elements you want to process, then when your page and fonts are loaded, call `ftw_fit()`.
 
 ## Background
 The term “fit to width” here refers to the adjustment of typographic parameters so that a given text fits into the width of a given text container on a single line. Here is a list of typographic adjustments, along the CSS used to control it.
