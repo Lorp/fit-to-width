@@ -39,7 +39,7 @@ In the table, the first column shows various possible typographic adjustments we
 | horizontal scale | `transform:scale(<scale-factor>,1)`) |  **transform** |  ✓    |
 
 By default ftw_fit() uses the following methods in this order:
-* `font-stretch`
+* `font-variation-settings:wdth`
 * `transform`
 
 **Caution: Chrome has not implemented CSS font-stretch for variable fonts, so you must use the `font-variation-settings:wdth` method instead. This low-level property does not inherit other axis settings, and so other axes revert to default if you are not careful. See below for how to use the `axes` property to set other axes.**
