@@ -14,7 +14,7 @@ To try out the library:
  
 * Set these `<div>` elements in a variable font with a Width axis.
 
-* Style these `<div>` elements to have a specific width, e.g. `font-width: 600px`.
+* Style these `<div>` elements to have a specific width, e.g. `width: 600px`.
 
 * Include the `fit-to-width.js` script at the top of your web page like this:
 
