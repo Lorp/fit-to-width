@@ -24,6 +24,8 @@ To try out the library:
 
 * When your page and fonts are loaded, call `ftw_fit(".ftw")`.
 
+* or try this [CodePen](https://codepen.io/lorp/pen/rKMvZP)
+
 ## Background
 
 In the table, the first column shows various possible typographic adjustments we can try in order to adjust width. The CSS column shows how we adjust this with CSS. The third column shows the method name we use in fit-to-width.js. The fourth column shows whether or not this adjustment is implemented in fit-to-width.js.
