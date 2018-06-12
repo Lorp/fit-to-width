@@ -81,6 +81,7 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 	// for each element supplied by the user
 	for (let el of els)
 	{
+		let success = false;
 		config.targetWidth = targetWidth || el.clientWidth;
 		el.style.whiteSpace = "nowrap";
 		el.style.width = "max-content";
@@ -99,9 +100,11 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 				case "font-variation-settings:wdth":
 				case "letter-spacing":
 				case "word-spacing":
-					ftw_fit_binary_search (el, operation, config.targetWidth);
+					success = ftw_fit_binary_search (el, operation, config.targetWidth);
 					break;
 			}
+			if (success)
+				break;
 		}
 
 		// reset element width
@@ -119,24 +122,28 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 	let max = operation.max;
 	let minClientWidth, maxClientWidth;
 	let done = false;
+	let success = false;
 
-	// check min < max
-	if (min >= max) { // FAIL: min>=max
-		operation.bsFunc(el, min);
+	// checks before binary search
+	if (min > max)
 		done = true;
-	}
 	else {
-		// before we search, check it’s above the min
-		operation.bsFunc(el, min);
-		if ((minClientWidth=el.clientWidth) > targetWidth) // FAIL: min>targetWidth
+		operation.bsFunc(el, min); // above the min?
+		if ((minClientWidth=el.clientWidth) >= targetWidth) {
 			done = true;
+			if (minClientWidth == targetWidth)
+				success = true;
+		}
 		else {
-			// before we search, check it’s below the max
-			operation.bsFunc(el, max);
-			if ((maxClientWidth=el.clientWidth) < targetWidth) // FAIL: max<targetWidth
+			operation.bsFunc(el, max); // below the max?
+			if ((maxClientWidth=el.clientWidth) < targetWidth) {
 				done = true;
-			else if (minClientWidth >= maxClientWidth) // check width at min != width at max FAIL: min>=max";
+				if (maxClientWidth == targetWidth)
+					success = true;
+			}
+			else if (minClientWidth >= maxClientWidth) {// check width at min != width at max
 				done = true;
+			}
 		}
 	}
 
@@ -144,19 +151,19 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 	while (!done) {
 
 		val = 0.5 * (min+max);
-		operation.bsFunc(el, val);
+		operation.bsFunc(el, val); // set the CSS
 
 		let diff = el.clientWidth - targetWidth;
-		if (diff < 0) {
-			if (diff > -operation.maxDiff) // SUCCESS: <maxDiff (iterations=" + iterations + ")				
+		if (diff <= 0) {
+			if (diff > -operation.maxDiff) { // SUCCESS: <maxDiff (iterations=" + iterations + ")				
+				success = true;
 				done = true;
+			}
 			else
 				min = val; // binary search, too low
 		}
-		else if (diff > 0)
+		else
 			max = val; // binary search, too high
-		else // diff == 0, el.clientWidth == targetWidth SUCCESS: exact (iterations=" + iterations + ")
-			done = true; // we’re lucky!
 
 		// next iteration
 		iterations++;
@@ -167,6 +174,8 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 				operation.bsFunc(el, min);
 		}
 	}
+
+	return success;
 }
 
 
