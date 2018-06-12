@@ -50,7 +50,7 @@ By default ftw_fit() uses the following methods in this order:
 
 ### _elements_
 
-The required first parameter, **elements***, specifies the DOM elements we should process. We can specify these elements in several ways:
+The required first parameter, **elements**, specifies the DOM elements we should process. We can specify these elements in several ways:
 
 * A string, e.g. “.ftw”, is used as a selector to obtain all elements matching `document.querySelectorAll(<string>)`. The example will get all elements of class “ftw”. This is similar to element selection in jQuery.
 
@@ -116,13 +116,13 @@ This ftw_fit() method uses CSS `letter-spacing` to make the text fit the contain
 
 ### _targetWidth_
 
-We can choose a specific target width for the elements in pixels. Default is to use the current width of the elements.
+The optional `targetWidth` parameter is used to set a pixel width for the element. Default is to use the current width of the elements.
 
 **Be careful not to apply `ftw_fit()` on elements of `auto` width.**
 
 ## Return value
 
-Returns the `config` object, which has properties:
+Returns an object which has properties:
 * `elapsedTime`: the total time in ms
 * `operations`: the operations used to adjust elements
 
