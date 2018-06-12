@@ -1,244 +1,187 @@
 // fit-to-width.js
 
-
 /* 
 
 Fits text to the width of its DOM container using various methods.
 
 The core function is ftw_fit(), to which you pass a DOM element or an array of DOM elements. This applies various width adjustment methods, until either succeeding or giving up. Default (which is easily configurable) is to first try CSS font-stretch, then CSS letter-spacing, then finally CSS transform.
 
-
 */
 
-// default config
-ftwConfigDefault = {
-	methods: ["font-stretch", "letter-spacing", "transform"],
-	maxIterations: 50,
-	maxDiff: 1,
-	minWdth: 0.00001,
-	maxWdth: 0x8000 - 1/0x10000,
-	minLetterSpacing: -0.05,
-	maxLetterSpacing: 1,
-	results: []
-}
-
+// set up defaults for each method
+const ftw_methods = {
+	"font-stretch": {min: 0.00001, max: 0x8000 - 1/0x10000, bsFunc: ftw_setFontStretch},
+	"font-variation-settings:wdth": {min: -0x8000, max: 0x8000 - 1/0x10000, bsFunc: ftw_setFontVariationSettingsWdth},
+	"letter-spacing": {min: -0.05, max: 1, bsFunc: ftw_setLetterSpacing},
+	"word-spacing": {min: -0.2, max: 20, bsFunc: ftw_setWordSpacing},
+	"transform": {},
+	"ligatures": {}
+};
 
 // function to check if iterable
 const ftw_ArgIsIterable = object => object != null && typeof object[Symbol.iterator] === 'function';
 
+function ftw_setFontStretch (el, val) {
+	el.style.fontStretch = val + "%";
+}
+
+function ftw_setFontVariationSettingsWdth (el, val) {
+	//el.style.fontVariationSettings = "'wdth' " + val;
+	el.style.fontVariationSettings = "'wdth' " + val + ",'wght' 0";
+}
+
+function ftw_setLetterSpacing (el, val) {
+	el.style.letterSpacing = val + "em";
+}
+
+function ftw_setWordSpacing (el, val) {
+	el.style.wordSpacing = val + "em";
+}
+
+function ftw_Operation (method, min, max, maxDiff, maxIterations, axes) {
+	if (ftw_methods[method]) {
+		this.method = method;
+		this.min = min === undefined ? ftw_methods[method].min : min;
+		this.max = min === undefined ? ftw_methods[method].max : max;
+		this.bsFunc = ftw_methods[method].bsFunc;
+		this.maxDiff = maxDiff === undefined ? 1 : maxDiff; // allows 0
+		this.maxIterations = maxIterations === undefined ? 50 : maxIterations;
+		this.axes = axes;
+	}
+	else
+		this.method = null;
+}
 
 // main function
-function ftw_fit (elements, ftwConfigUser) {
+function ftw_fit (elements, ftwOperations, targetWidth) {
 
 	let startTime = performance.now();
-	let thisConfig = ftwConfigDefault;
+	let config = {
+		operations: ftwOperations || ["font-variation-settings:wdth", "transform"]
+	};
 	let els;
 
-	// special case if parameter 0 is undefined or a string
-	if (elements === undefined)
-		elements = "ftw";
+	// get all elements selected by the string elements
 	if (typeof elements === "string")
-		elements = document.getElementsByClassName(elements);
-
-	// if so, call the function for each object
-	if (ftw_ArgIsIterable(elements)) {
-		// ftw_fit();
-
+		els = document.querySelectorAll(elements);
+	// is elements already a NodeList or array of elements? if so, fine; otherwise make it an array
+	else if (ftw_ArgIsIterable(elements))
 		els = elements;
-	}
 	else
 		els = [elements]; // convert to an array
 
 	// user config?
-	if (ftwConfigUser)
-	{
-		if (ftwConfigUser && ftwConfigUser.minWdth !== undefined)
-			thisConfig.minWdth = ftwConfigUser.minWdth;
-
-		if (ftwConfigUser && ftwConfigUser.maxWdth !== undefined)
-			thisConfig.maxWdth = ftwConfigUser.maxWdth;
-
-		if (ftwConfigUser && ftwConfigUser.methods !== undefined)
-			thisConfig.methods = ftwConfigUser.methods;
+	if (!Array.isArray(config.operations)) {
+		if (!config.operations)
+			config.operations = ["font-stretch"];
+		else if (typeof config.operations === "string" || typeof config.operations === "object")
+			config.operations = [config.operations];
 	}
 
 	// for each element supplied by the user
-	for (let e=0; e<els.length; e++)
+	for (let el of els)
 	{
-		thisConfig.e = e;
-		el=els[e];
-		thisConfig.results[e] = {};
-		thisConfig.targetWidth = el.clientWidth;
-		let targetWidth = thisConfig.targetWidth;
-
+		config.targetWidth = targetWidth || el.clientWidth;
 		el.style.whiteSpace = "nowrap";
 		el.style.width = "max-content";
 
-		for (let m=0; m<thisConfig.methods.length; m++) {
-			let method = thisConfig.methods[m];
-			if (thisConfig.results[e].success)
-				break;
+		for (let op of config.operations) {
+			let operation;
+			if (typeof op === "string")
+				operation = new ftw_Operation(op);
+			else
+				operation = new ftw_Operation(op.method, op.min, op.max, op.maxDiff, op.maxIterations, op.axes);
 
-			switch (method) {
-				case "font-stretch": ftw_fit_wdth (el, thisConfig); break;
-				case "letter-spacing": ftw_fit_letterSpacing (el, thisConfig); break;
-				case "transform": ftw_fit_transform (el, thisConfig); break;
+			switch (operation.method) {
+				case "transform": ftw_fit_transform (el, config); break;
+				case "ligatures": ftw_fit_ligatures (el, config); break;
+				case "font-stretch":
+				case "font-variation-settings:wdth":
+				case "letter-spacing":
+				case "word-spacing":
+					ftw_fit_binary_search (el, operation, config.targetWidth);
+					break;
 			}
 		}
 
 		// reset element width
-		el.style.width = targetWidth+"px"; // TODO: revert it to its original calculated width, e.g. "10em"?
+		el.style.width = config.targetWidth+"px"; // TODO: revert it to its original calculated width, e.g. "10em"?
 	}
 
-	// performance check
-	thisConfig.elapsedTime = performance.now() - startTime;
-	console.log ("RESULTS");
-	console.log (thisConfig);
+	config.elapsedTime = performance.now() - startTime;
+	return config;
 }
 
+function ftw_fit_binary_search (el, operation, targetWidth) {
 
-
-function ftw_fit_wdth (el, thisConfig) {
-	let targetWidth = thisConfig.targetWidth;
-	let e = thisConfig.e;
-	let done = false;
 	let iterations = 0;
-	let minWdth = thisConfig.minWdth;
-	let maxWdth = thisConfig.maxWdth;
-	let wdth;
+	let min = operation.min;
+	let max = operation.max;
+	let minClientWidth, maxClientWidth;
+	let done = false;
 
-	// check it’s above the min
-	el.style.fontStretch = minWdth + "%";
-	if (el.clientWidth > targetWidth) {
-		thisConfig.results[e].wdth = "FAIL: min>targetWidth";
+	// check min < max
+	if (min >= max) { // FAIL: min>=max
+		operation.bsFunc(el, min);
 		done = true;
 	}
 	else {
-		// check it’s below the max
-		el.style.fontStretch = maxWdth + "%";
-		if (el.clientWidth < targetWidth) {
-			thisConfig.results[e].wdth = "FAIL: max<targetWidth";
+		// before we search, check it’s above the min
+		operation.bsFunc(el, min);
+		if ((minClientWidth=el.clientWidth) > targetWidth) // FAIL: min>targetWidth
 			done = true;
+		else {
+			// before we search, check it’s below the max
+			operation.bsFunc(el, max);
+			if ((maxClientWidth=el.clientWidth) < targetWidth) // FAIL: max<targetWidth
+				done = true;
+			else if (minClientWidth >= maxClientWidth) // check width at min != width at max FAIL: min>=max";
+				done = true;
 		}
 	}
 
+	let val;
 	while (!done) {
 
-		wdth = 0.5 * (minWdth+maxWdth);
-		el.style.fontStretch = wdth + "%";
+		val = 0.5 * (min+max);
+		operation.bsFunc(el, val);
 
 		let diff = el.clientWidth - targetWidth;
 		if (diff < 0) {
-			if (diff > -thisConfig.maxDiff) {
-				thisConfig.results[e].wdth = "SUCCESS: <1px";
-				thisConfig.results[e].success = "wght";
+			if (diff > -operation.maxDiff) // SUCCESS: <maxDiff (iterations=" + iterations + ")				
 				done = true;
-			}
 			else
-				minWdth = wdth; // binary search, too low
+				min = val; // binary search, too low
 		}
 		else if (diff > 0)
-			maxWdth = wdth; // binary search, too high
-		else { // diff == 0, el.clientWidth == targetWidth
-			thisConfig.results[e].wdth = "SUCCESS: exact!";
-			thisConfig.results[e].success = "wght";
+			max = val; // binary search, too high
+		else // diff == 0, el.clientWidth == targetWidth SUCCESS: exact (iterations=" + iterations + ")
 			done = true; // we’re lucky!
-		}
 
 		// next iteration
 		iterations++;
-		if (iterations >= thisConfig.maxIterations) {
-			thisConfig.results[e].wdth = "FAIL: wght did not converge (diff=" + diff +")";
+		if (iterations >= operation.maxIterations) {
+			// FAIL: wght did not converge (diff=" + diff +",iterations=" + iterations +")
 			done = true;
-
 			if (diff>0) // better to leave the element at minWdth rather than > targetWidth
-				el.style.fontStretch = minWdth + "%";
-		}
-	}
-
-	thisConfig.results[e].iterations = iterations;
-	thisConfig.done = done;
-}
-
-
-function ftw_fit_letterSpacing (el, thisConfig) {
-	let targetWidth = thisConfig.targetWidth;
-	let e = thisConfig.e;
-	let done = false;
-	let iterations = 0;
-	let minLS = thisConfig.minLetterSpacing;
-	let maxLS = thisConfig.maxLetterSpacing;
-	let ls;
-
-	// check it’s above the min
-	el.style.letterSpacing = minLS + "em";
-	if (el.clientWidth > targetWidth) {
-		thisConfig.results[e].letterSpacing = "FAIL: minLetterSpacing>targetWidth";
-		done = true;
-	}
-	else {
-		// check it’s below the max
-		el.style.letterSpacing = maxLS + "em";
-		if (el.clientWidth < targetWidth) {
-			thisConfig.results[e].letterSpacing = "FAIL: maxLetterSpacing<targetWidth";
-			done = true;
-		}
-	}
-
-	while (!done) {
-
-		ls = 0.5 * (minLS+maxLS);
-
-		// set the letterSpacing
-		el.style.letterSpacing = ls + "em";
-
-		let diff = el.clientWidth - targetWidth;
-		if (diff < 0) {
-			// within 1 pixel?
-			if (diff > -thisConfig.maxDiff) {
-				thisConfig.results[e].letterSpacing = "SUCCESS: <1px";
-				thisConfig.results[e].success = "letter-space";
-				done = true;
-			}
-			else
-				minLS = ls;
-		}
-		else if (diff > 0)
-			maxLS = ls;
-		else { // el.clientWidth == targetWidth, diff == 0
-			thisConfig.results[e].letterSpacing = "SUCCESS: exact!";
-			thisConfig.results[e].success = "letter-space";
-			done = true; // we’re lucky!
-		}
-
-		// next iteration
-		iterations++;
-		if (iterations >= thisConfig.maxIterations) {
-			thisConfig.results[e].letterSpacing = "FAIL: letter-spacing did not converge (diff=" + diff +")";
-			done = true;
-
-			if (diff>0) // better to leave the element at minWdth rather than > targetWidth
-				el.style.letterSpacing = minLS + "em";
+				operation.bsFunc(el, min);
 		}
 	}
 }
 
 
-function ftw_fit_transform (el, thisConfig) {
-	let targetWidth = thisConfig.targetWidth;
-	let e = thisConfig.e;
+function ftw_fit_transform (el, config) {
 	el.style.transformOrigin = "left";
-	el.style.transform = "scale(" + (thisConfig.targetWidth / el.clientWidth) + ",1)";
+	el.style.transform = "scale(" + (config.targetWidth / el.clientWidth) + ",1)";
 }
 
 
-function ftw_fit_ligatures (el, thisConfig) {
-	let targetWidth = thisConfig.targetWidth;
-	let e = thisConfig.e;
+function ftw_fit_ligatures (el, config) {
 	el.style.fontFeatureSettings = "'liga' 1, 'dlig' 1";
-
-	// TODO
-	// Adjust the width using other methods
-	// Normally we would only apply ligatures when we want to reduce width.
+	// EXPERIMENTAL
+	// * to reduce width, should turn on ligatures
+	// * to increase width, should turn off ligatures
+	// * should really add these to any existing settings using getComputedStyle
+	// Good candidate string: "VAMPIRE HELL" set in Skia
 }
 
