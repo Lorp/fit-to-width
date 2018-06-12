@@ -94,7 +94,7 @@ This ftw_fit() method uses CSS `word-spacing` to make the text fit the container
 
 #### `letter-spacing` [binary search]
 
-This ftw_fit() method uses CSS `letter-spacing` to make the text fit the container. Default min and max are -0.05 and 1
+This ftw_fit() method uses CSS `letter-spacing` to make the text fit the container. Default min and max are -0.05 and 1.
 
 #### `transform`
 
@@ -112,7 +112,7 @@ This ftw_fit() method uses CSS `letter-spacing` to make the text fit the contain
 #### Examples of values for the operations parameter
 
 * `["font-variation-settings:wdth", "transform"]` (default)
-* `[{method:"font-stretch",min: 0.61998, max: 1.3}]` (setting a font’s weight axis min and max helps it converge more quickly)
+* `[{method:"font-stretch",min: 0.61998, max: 1.3}]` (setting min and max to the min and max of the font’s weight axis helps it converge more quickly)
 
 ### _targetWidth_
 
