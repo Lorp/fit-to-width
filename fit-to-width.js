@@ -26,10 +26,10 @@ function ftw_setFontStretch (el, val, operation) {
 }
 
 function ftw_setFontVariationSettingsWdth (el, val, operation) {
-	let fvsString = operation.axes + "," || "";
-	fvsString += "'wdth' " + val;
+	let fvsString = "'wdth' " + val;
+	if (operation.axes)
+		fvsString += "," + operation.axes;
 	el.style.fontVariationSettings = fvsString;
-	console.log (fvsString);
 }
 
 function ftw_setLetterSpacing (el, val) {
@@ -107,12 +107,13 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 					break;
 				// ignore unrecognized methods
 			}
+
 			if (success)
 				break;
 		}
 
 		// reset element width
-		el.style.width = config.targetWidth+"px"; // TODO: revert it to its original calculated width, e.g. "10em"?
+		el.style.width = config.targetWidth+"px"; // TODO: revert it to its original getComputedStyle() width, e.g. "10em"?
 	}
 
 	config.elapsedTime = performance.now() - startTime;
@@ -159,7 +160,7 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 
 		let diff = el.clientWidth - targetWidth;
 		if (diff <= 0) {
-			if (diff > -operation.maxDiff) { // SUCCESS: <maxDiff (iterations=" + iterations + ")				
+			if (diff > -operation.maxDiff) { // SUCCESS: <maxDiff (iterations=" + iterations + ")
 				success = true;
 				done = true;
 			}
@@ -171,8 +172,7 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 
 		// next iteration
 		iterations++;
-		if (iterations >= operation.maxIterations) {
-			// FAIL: wght did not converge (diff=" + diff +",iterations=" + iterations +")
+		if (iterations >= operation.maxIterations) { // FAIL: wght did not converge (diff=" + diff +",iterations=" + iterations +")
 			done = true;
 			if (diff>0) // better to leave the element at minWdth rather than > targetWidth
 				operation.bsFunction(el, min, operation);
