@@ -174,7 +174,7 @@ Here is a more advanced example
 </div>
 
 <script>
-ftw_fit("myftwclass", [{method:"font-variation-settings:wdth", min: 0.6, max: 600},"letter-spacing","transform"}]);
+ftw_fit(".myftwclass", [{method:"font-variation-settings:wdth", min: 0.6, max: 600},"letter-spacing","transform"]);
 </script>
 ```
 This will first attempt to fit using font-variation-settings, then try letter-spacing, then finally (if those still have not fit the text) transform.
