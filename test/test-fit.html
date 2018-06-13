@@ -3,6 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
+<link rel="shortcut icon" href="">
 
 <script src="../fit-to-width.js"></script>
 
@@ -23,7 +24,6 @@
 	font-family: Fit;
 	width: 600px;
 	font-size: 72px;
-	height: 1em;
 }
 
 .notice {
@@ -38,28 +38,25 @@
 
 <body>
 
-<button id="fit">Fit-to-width!</button>
+Click the button to fit the text! <button id="fit">Fit-to-width!</button>
 
 <div class="ftw">
-Here is 
+Short title
 </div>
 <div class="ftw">
-Here is more
+Moderately shortish
 </div>
 <div class="ftw">
-Here is more textyyy and again
+Waste not want not! Oder?
 </div>
 <div class="ftw">
-Here is more textyyy Here is more textyyy and again
+Rolling stones gathers moss.
 </div>
 <div class="ftw">
-Here is more textyyy
+The early bird catches the worm.
 </div>
 <div class="ftw">
-Here is more textyyy Here is more textydshfsdk
-</div>
-<div class="ftw">
-Here is more textyyy Here is more textyyy and again sdhfg skdhjfg sdkhjfgdsf
+The quick brown fox jumps over the lazy dog and lorem ipsum dolor sit.
 </div>
 
 <p class="notice">This document references a font that is licensed to Laurence Penney. Special permission has been granted to crosslink to it for demo purposes only. You must obtain an appropriate license at <a href="https://djr.com/fit">djr.com/fit</a> before linking to this font or using it in any other context.</p>	
@@ -70,7 +67,7 @@ document.fonts.ready.then(function () {
 
 	document.getElementById("fit").addEventListener("click", function () {
 
-		ftw_fit();
+		ftw_fit(".ftw");
 
 	});
 });

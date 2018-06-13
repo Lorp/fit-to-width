@@ -3,8 +3,10 @@
 <head>
 
 <meta charset="UTF-8">
+<link rel="shortcut icon" href="">
 
-<script src="fit-to-width.js"></script>
+<script src="../fit-to-width.js"></script>
+
 <style>
 @font-face {
 	font-family: Bahnschrift;
@@ -15,7 +17,7 @@
 	font-family: Bahnschrift;
 	width: 600px;
 	font-size: 72px;
-	height: 1em;
+	font-weight: 700;
 }
 
 </style>
@@ -24,31 +26,34 @@
 
 <body>
 
+Click the button to fit the text! <button id="fit">Fit-to-width!</button>
+
 <div class="ftw">
-Here is 
+Short title
 </div>
 <div class="ftw">
-Here is more
+Moderately shortish
 </div>
 <div class="ftw">
-Here is more textyyy and again
+Waste not want not! Oder?
 </div>
 <div class="ftw">
-Here is more textyyy Here is more textyyy and again
+Rolling stones gathers moss.
 </div>
 <div class="ftw">
-Here is more textyyy
+The early bird catches the worm.
 </div>
 <div class="ftw">
-Here is more textyyy Here is more textydshfsdk
-</div>
-<div class="ftw">
-Here is more textyyy Here is more textyyy and again sdhfg skdhjfg sdkhjfgdsf
+The quick brown fox jumps over the lazy dog and lorem ipsum dolor sit.
 </div>
 
 <script>
 
-ftw_fit(document.getElementsByClassName("ftw"));
+document.getElementById("fit").addEventListener("click", function () {
+
+	ftw_fit(".ftw", [{method:"font-variation-settings:wdth",axes:"'wght' 700"}, "letter-spacing"]);	
+
+});
 
 </script>
 
