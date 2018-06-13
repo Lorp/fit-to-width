@@ -10,10 +10,10 @@ The core function is ftw_fit(), to which you pass a DOM element or an array of D
 
 // set up defaults for each method
 const ftw_methods = {
-	"font-stretch": {min: 0.00001, max: 0x8000 - 1/0x10000, bsFunc: ftw_setFontStretch},
-	"font-variation-settings:wdth": {min: -0x8000, max: 0x8000 - 1/0x10000, bsFunc: ftw_setFontVariationSettingsWdth},
-	"letter-spacing": {min: -0.05, max: 1, bsFunc: ftw_setLetterSpacing},
-	"word-spacing": {min: -0.2, max: 20, bsFunc: ftw_setWordSpacing},
+	"font-stretch": {min: 0.00001, max: 0x8000 - 1/0x10000, bsFunction: ftw_setFontStretch},
+	"font-variation-settings:wdth": {min: -0x8000, max: 0x8000 - 1/0x10000, bsFunction: ftw_setFontVariationSettingsWdth},
+	"letter-spacing": {min: -0.05, max: 1, bsFunction: ftw_setLetterSpacing},
+	"word-spacing": {min: -0.2, max: 20, bsFunction: ftw_setWordSpacing},
 	"transform": {},
 	"ligatures": {}
 };
@@ -21,13 +21,15 @@ const ftw_methods = {
 // function to check if iterable
 const ftw_ArgIsIterable = object => object != null && typeof object[Symbol.iterator] === 'function';
 
-function ftw_setFontStretch (el, val) {
+function ftw_setFontStretch (el, val, operation) {
 	el.style.fontStretch = val + "%";
 }
 
-function ftw_setFontVariationSettingsWdth (el, val) {
-	//el.style.fontVariationSettings = "'wdth' " + val;
-	el.style.fontVariationSettings = "'wdth' " + val + ",'wght' 0";
+function ftw_setFontVariationSettingsWdth (el, val, operation) {
+	let fvsString = operation.axes + "," || "";
+	fvsString += "'wdth' " + val;
+	el.style.fontVariationSettings = fvsString;
+	console.log (fvsString);
 }
 
 function ftw_setLetterSpacing (el, val) {
@@ -43,7 +45,7 @@ function ftw_Operation (method, min, max, maxDiff, maxIterations, axes) {
 		this.method = method;
 		this.min = min === undefined ? ftw_methods[method].min : min;
 		this.max = min === undefined ? ftw_methods[method].max : max;
-		this.bsFunc = ftw_methods[method].bsFunc;
+		this.bsFunction = ftw_methods[method].bsFunction;
 		this.maxDiff = maxDiff === undefined ? 1 : maxDiff; // allows 0
 		this.maxIterations = maxIterations === undefined ? 50 : maxIterations;
 		this.axes = axes;
@@ -86,6 +88,7 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 		el.style.whiteSpace = "nowrap";
 		el.style.width = "max-content";
 
+		// for each operation specified by the user
 		for (let op of config.operations) {
 			let operation;
 			if (typeof op === "string")
@@ -102,6 +105,7 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 				case "word-spacing":
 					success = ftw_fit_binary_search (el, operation, config.targetWidth);
 					break;
+				// ignore unrecognized methods
 			}
 			if (success)
 				break;
@@ -128,14 +132,14 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 	if (min > max)
 		done = true;
 	else {
-		operation.bsFunc(el, min); // above the min?
+		operation.bsFunction(el, min, operation); // above the min?
 		if ((minClientWidth=el.clientWidth) >= targetWidth) {
 			done = true;
 			if (minClientWidth == targetWidth)
 				success = true;
 		}
 		else {
-			operation.bsFunc(el, max); // below the max?
+			operation.bsFunction(el, max, operation); // below the max?
 			if ((maxClientWidth=el.clientWidth) < targetWidth) {
 				done = true;
 				if (maxClientWidth == targetWidth)
@@ -151,7 +155,7 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 	while (!done) {
 
 		val = 0.5 * (min+max);
-		operation.bsFunc(el, val); // set the CSS
+		operation.bsFunction(el, val, operation); // set the CSS
 
 		let diff = el.clientWidth - targetWidth;
 		if (diff <= 0) {
@@ -171,7 +175,7 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 			// FAIL: wght did not converge (diff=" + diff +",iterations=" + iterations +")
 			done = true;
 			if (diff>0) // better to leave the element at minWdth rather than > targetWidth
-				operation.bsFunc(el, min);
+				operation.bsFunction(el, min, operation);
 		}
 	}
 
