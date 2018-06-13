@@ -116,8 +116,9 @@ Not ready for use. This method always applies `font-variation-settings:'dlig' 1,
 
 #### Examples of values for the operations parameter
 
-* `["font-variation-settings:wdth", "transform"]` (default)
+* `["font-variation-settings:wdth", "transform"]` (default, so you can omit it if you want this)
 * `[{method:"font-stretch",min: 0.61998, max: 1.3}]` (setting min and max to the min and max of the font’s weight axis helps it converge more quickly)
+* `[{method:"font-variation-settings:wdth", axes:"'wght' 280, 'opsz' 22"}]` (keep `wght` axis at 280 and `opsz` axis at 22 while adjusting the `wdth` axis)
 
 ### _targetWidth_
 
