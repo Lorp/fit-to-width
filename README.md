@@ -82,7 +82,7 @@ This ftw_fit() method uses CSS `font-stretch`, which is expected to be the stand
 
 There are two significant disadvantages in using CSS font-stretch now, however:
 
-1. Although CSS `font-stretch` is working in Safari it is not supported in Chrome (2018-06), so cross-platform code must use CSS `font-variation-settings`. The `font-variation-settings:wdth` is implemented in ftw_fit() for this purpose.
+1. Although CSS `font-stretch` is working in Safari it is not supported in Chrome (2018-06), so cross-platform code must use CSS `font-variation-settings`. The `font-variation-settings:wdth` method is implemented in ftw_fit() for this purpose.
 
 2. CSS font-stretch uses % units, where 100% is normal width, 50% is a notional half-width, and 200% is a notional double width font. According to the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_wdth), these values are supposed to come directly from `wdth` axis coordinates. Unfortunately, many existing variable fonts use `wdth` axis values which do not make sense as percentages; the range 0 to 1000 is common, and negative values are also seen. Such non-compliant values are not handled well by browsers.
 
