@@ -84,11 +84,11 @@ There are two significant disadvantages in using CSS font-stretch now, however:
 
 1. Although CSS `font-stretch` is working in Safari it is not supported in Chrome (2018-06), so cross-platform code must use CSS `font-variation-settings`. The `font-variation-settings:wdth` method is implemented in ftw_fit() for this purpose.
 
-2. CSS font-stretch uses % units, where 100% is normal width, 50% is a notional half-width, and 200% is a notional double width font. According to the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_wdth), these values are supposed to come directly from `wdth` axis coordinates. Unfortunately, many existing variable fonts use `wdth` axis values which do not make sense as percentages; the range 0 to 1000 is common, and negative values are also seen. Such non-compliant values are not handled well by browsers.
+2. CSS font-stretch uses % units, where 100% is normal width, 50% is a notional half-width, and 200% is a notional double width font. According to the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_wdth), these values are supposed to come directly from `wdth` axis coordinates. Unfortunately, many existing variable fonts use `wdth` axis values which do not make sense as percentages; the range 0 to 1000 is common, and negative values are also seen. Such non-compliant values are not handled well by browsers. Default min and max are 0.00001 and 32767.99998. Note that values of `font-stretch` <= 0 are invalid.
 
 #### `font-variation-settings:wdth` [binary search]
 
-This ftw_fit() method uses the low-level CSS `font-variation-settings` property. It works on all browser platforms where variable fonts are supported. Care must be taken because it overrides axis settings made elsewhere, for example an initial or inherited `wght` axis setting. See the `axes` method property for a way to specify other axes.
+This ftw_fit() method uses the low-level CSS `font-variation-settings` property. It works on all browser platforms where variable fonts are supported. Care must be taken because it overrides axis settings made elsewhere, for example an initial or inherited `wght` axis setting. See the `axes` method property for a way to specify other axes. Default min and max are -32768 and 32767.99998 (the extremes of the Fixed 16.16 representation).
 
 #### `word-spacing` [binary search]
 
@@ -190,7 +190,7 @@ a solution is needed.
 
 * Currently (2018-06) only Safari supports `font-stretch`. You must use the `font-variation-settings:wdth` method for Chrome.
 
-* Unfortunately, letter-spacing is added to glyphs even if that glyph is last on a line. This means that when significant letter-spacing is used, we get white space, when we would prefer more letter-space and text aligning with the right margin. It’s not clear if this is an inherent problem in the CSS specification or in implementations.
+* Unfortunately, in many browsers letter-spacing is added to glyphs even when a glyph is last on a line. This is typographically incorrect and [the CSS specification is clear](https://drafts.csswg.org/css-text-3/#letter-spacing-property): “Letter-spacing must not be applied at the beginning or at the end of a line”.
 
 * Glyph sidebearings mean that lines of large font-size or large font-width do not align precisely with lines of small font-size or large font-width. It could be a good idea to add customization for this, but it would probably have to be tuned for each font.
 
