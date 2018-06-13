@@ -111,7 +111,7 @@ Not ready for use. This method always applies `font-variation-settings:'dlig' 1,
 * `max` is the maximum value to be used in the binary search. If you know the maximum width axis value, specify it here to save a few iterations.
 * `maxDiff` is the largest difference, measured in px units, from the targetWidth that we accept before proceeding to the next operation. Default is 1.
 * `maxIterations` is the number of tests we perform before giving up. Default is 50.
-* `axes` (used only in the `font-variation-settings:wdth` method) specifies axis locations other than `wdth`. These get appended to the `font-variation-settings` CSS. For example, if you want to run ftw_fit() while keeping `wght` at 788 and `opsz` at 36, then specify `axes:"'wght' 788, 'opsz' 36"`. You might use `getComputedStyle()` to find current weight, in order to inherit the inherited or initial weight of the element.
+* `axes` (used only in the `font-variation-settings:wdth` method) specifies axis locations other than `wdth`. These get appended to the `font-variation-settings` CSS. For example, if you want to run ftw_fit() while keeping `wght` at 788 and `opsz` at 36, then specify `axes:"'wght' 788, 'opsz' 36"`. You might use `getComputedStyle()` to find current weight, in order to use an inherited or initial weight of the element.
 
 
 #### Examples of values for the operations parameter
