@@ -205,4 +205,4 @@ a solution is needed.
 
 * [Fitty](https://www.npmjs.com/package/fitty) by [Bram Stein](https://github.com/bramstein).
 
-* [typeset](https://github.com/bramstein/typeset), by [Bram Stein](https://github.com/bramstein), the TeX line breaking algorithm in JavaScript. This scales each line by a different amount to reduce whitespace caused by justification.
+* [typeset](https://github.com/bramstein/typeset) by [Bram Stein](https://github.com/bramstein), the TeX line breaking algorithm in JavaScript. This scales each line horizontally by a different amount to reduce whitespace caused by justification.
