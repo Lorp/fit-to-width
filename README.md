@@ -204,3 +204,5 @@ a solution is needed.
 * [FitText.js](https://github.com/adactio/FitText.js), a tiny JavaScript library by [Jeremy Keith](https://github.com/adactio) that does the same thing as FitText but without the jQuery dependency.
 
 * [Fitty](https://www.npmjs.com/package/fitty) by [Bram Stein](https://github.com/bramstein).
+
+* [typeset](https://github.com/bramstein/typeset), by [Bram Stein](https://github.com/bramstein), the TeX line breaking algorithm in JavaScript. This scales each line by a different amount to reduce whitespace caused by justification.
