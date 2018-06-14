@@ -196,3 +196,11 @@ a solution is needed.
 * Glyph sidebearings mean that lines of large font-size or large font-width do not align precisely with lines of small font-size or large font-width. It could be a good idea to add customization for this, but it would probably have to be tuned for each font.
 
 * On macOS, system variable fonts (Skia and SF) when specified by `font-family`, do not properly clamp axis values to their minimum and maximum. A `wdth` axis setting of -32768 is valid in CSS, but it reverts to default width in Skia. To use system Skia and SF, be sure to specify axis extrema, as in `ftw_fit(".ftw", [{method: "font-variation-settings:wdth", min: 0.61998, max: 1.3}])`.
+
+## Similar projects
+
+* [FitText](http://fittextjs.com), a jQuery plugin by [Paravel](https://paravelinc.com) that adjusts CSS font-size to make text fit a given width.
+
+* [FitText.js](https://github.com/adactio/FitText.js), a tiny JavaScript library by [Jeremy Keith](https://github.com/adactio) that does the same thing as FitText but without the jQuery dependency.
+
+* [Fitty](https://www.npmjs.com/package/fitty) by [Bram Stein](https://github.com/bramstein).
