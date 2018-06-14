@@ -207,4 +207,4 @@ a solution is needed.
 
 * [typeset](https://github.com/bramstein/typeset) by [Bram Stein](https://github.com/bramstein), the TeX line breaking algorithm in JavaScript. This scales each line horizontally by a different amount to reduce whitespace caused by justification.
 
-* (http://font-to-width.com) is a small JavaScript library by [Nick Sherman](http://nicksherman.com/) and [Chris Lewis](http://chrissam42.com/) that takes advantage of large type families to fit pieces of text snugly within their containers.
+* [Font-To-Width](http://font-to-width.com) is a small JavaScript library by [Nick Sherman](http://nicksherman.com/) and [Chris Lewis](http://chrissam42.com/) that takes advantage of large type families to fit pieces of text snugly within their containers.
