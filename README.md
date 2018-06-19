@@ -1,6 +1,6 @@
 # fit-to-width.js
 
-fit-to-width.js is a tiny JavaScript library for fitting text into text containers in a typographically sensitive way, using standard CSS. It offers automatic adjustment of a variable font’s width (`wdth`) axis, as well as adjustments of letter-spacing and word-spacing. By default, it adjusts the width axis via CSS `font-variation-settings`, then resorts to a horizontal scale using CSS `transform`. In general, a sequence of operations can be specified, each performed to the best of its ability before proceeding to the next operation if an optimal result has not yet been reached.
+fit-to-width.js is a tiny JavaScript library for fitting text into text containers in a typographically sensitive way, using standard CSS. Its user-facing function, ftw_fit(), takes a set of elements, and automatically adjusts a variable font’s width (`wdth`) axis, as well as adjustments of letter-spacing and word-spacing, attempting to fill each element with the text that it contains. By default, it adjusts the width axis via CSS `font-variation-settings`, then resorts to a horizontal scale using CSS `transform`. In general, a sequence of operations can be specified, each performed to the best of its ability before proceeding to the next operation if an optimal result has not yet been reached.
 
 For efficiency it uses a binary search algorithm to converge quickly on a good result. Typically it performs only 8 or so tests to arrive at an ideal solution for the width axis setting, even though there are thousands of possible values.
 
