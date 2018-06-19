@@ -44,7 +44,9 @@ By default ftw_fit() uses the following methods in this order:
 * `font-variation-settings:wdth`
 * `transform`
 
-**Caution: Chrome has not implemented CSS font-stretch for variable fonts, so you must use the `font-variation-settings:wdth` method instead. This low-level property does not inherit other axis settings, and so other axes revert to default if you are not careful. See below for how to use the `axes` property to set other axes.**
+Note: Chrome has not implemented CSS `font-stretch` for variable fonts, so by default we use the `font-variation-settings:wdth` method instead. This low-level property does not inherit other axis settings, and so other axes revert to default if you are not careful. See below for how to use the `axes` property to set other axes.
+
+This method was first presented in [Resize textbox with variable fonts (aka Fit-to-Width)](https://www.axis-praxis.org/blog/2016-11-24/10/demo-resize-textbox-with-variable-fonts-aka-fit-to-width) on the Axis-Praxis blog, November 2016.
 
 ## Parameters
 
@@ -78,13 +80,13 @@ Each operation has a method name, which is one of:
 Each of these can be specified simply, just using a string. To use font-stretch, then letter-spacing, the `operations` parameter is `["font-stretch", "letter-spacing"]`. Each method can also be specified with various other parameters: min, max, maxDiff, maxIterations, axes.
 
 #### `font-stretch` [binary search]
-This ftw_fit() method uses CSS `font-stretch`, which is expected to be the standard method of adjusting width in variable fonts. Browsers implementing the property inherit just the `wdth` axis setting, so weight applied using other CSS will also be respected.
+This ftw_fit() method ideally would use CSS `font-stretch`, which is specified as the standard method of adjusting width in variable fonts. Browsers implementing the property inherit just the `wdth` axis setting, so weight applied using other CSS will also be respected.
 
 There are two significant disadvantages in using CSS font-stretch now, however:
 
 1. Although CSS `font-stretch` is working in Safari it is not supported in Chrome (2018-06), so cross-platform code must use CSS `font-variation-settings`. The `font-variation-settings:wdth` method is implemented in ftw_fit() for this purpose.
 
-2. CSS font-stretch uses % units, where 100% is normal width, 50% is a notional half-width, and 200% is a notional double width font. According to the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_wdth), these values are supposed to come directly from `wdth` axis coordinates. Unfortunately, many existing variable fonts use `wdth` axis values which do not make sense as percentages; the range 0 to 1000 is common, and negative values are also seen. Such non-compliant values are not handled well by browsers. Default min and max are 0.00001 and 32767.99998. Note that values of `font-stretch` <= 0 are invalid.
+2. CSS font-stretch uses % units, where 100% is normal width, 50% is a notional half-width, and 200% is a notional double width font. According to the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_wdth), these values are supposed to come directly from `wdth` axis coordinates. Unfortunately, many existing variable fonts use `wdth` axis values which do not make sense as percentages; the range 0 to 1000 is common, and negative values are also seen. Such non-compliant values are not handled well by browsers. Default min and max for ftw_fit() are 0.00001 and 32767.99998. Note that values of `font-stretch` <= 0 are invalid.
 
 #### `font-variation-settings:wdth` [binary search]
 
@@ -104,7 +106,7 @@ This ftw_fit() method uses CSS `transform:scale(n,1)`, where `n` is the scale by
 
 #### `ligatures`
 
-Not ready for use. This method always applies `font-variation-settings:'dlig' 1,'liga' 1`.
+Not ready for use. This method always applies `font-variation-settings:'dlig' 1,'liga' 1`. The idea is that we should turn on ligatures if we hope for a narrower setting.
 
 #### Method properties
 * `min` is the minimum value to be used in the binary search. If you don’t want `wdth` axis values below a certain value, specify it here. If you know the minimum width axis value, specify it here to save a few iterations.
@@ -134,7 +136,7 @@ Returns an object which has properties:
 
 ## Simple example
 
-```
+```html
 
 <style>
 .ftw {
@@ -163,7 +165,7 @@ ftw_fit(".ftw");
 
 ## Advanced example
 
-```
+```html
 <style>
 .myftwclass {
   width: 600px;
@@ -186,8 +188,7 @@ Performance is good since it uses binary search on `font-stretch` and `letter-sp
 
 ## Issues
 
-* Sometimes the font is not ready in time for a container’s `clientWidth` to be measured. Reloading usually solves the problem, but 
-a solution is needed.
+* Sometimes the font is not ready in time for a container’s `clientWidth` to be measured, even when document.fonts.ready has resolved to true. Reloading the page or adding a 2 ms timeout seems to solve the problem, but a solution is needed. This appears to be a bug since [the CSS spec states](https://drafts.csswg.org/css-font-loading-3/#font-face-set-ready) “The ready promise is only fulfilled after layout operations complete”
 
 * Currently (2018-06) only Safari supports `font-stretch`. You must use the `font-variation-settings:wdth` method for Chrome.
 
