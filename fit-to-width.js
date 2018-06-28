@@ -87,6 +87,7 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 		config.targetWidth = targetWidth || el.clientWidth;
 		el.style.whiteSpace = "nowrap";
 		el.style.width = "max-content";
+		el.style.transform = "none";
 
 		// for each operation specified by the user
 		for (let op of config.operations) {
@@ -109,7 +110,10 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 			}
 
 			if (success)
+			{
+				console.log (operation.method);
 				break;
+			}
 		}
 
 		// reset element width
@@ -123,8 +127,7 @@ function ftw_fit (elements, ftwOperations, targetWidth) {
 function ftw_fit_binary_search (el, operation, targetWidth) {
 
 	let iterations = 0;
-	let min = operation.min;
-	let max = operation.max;
+	let min = operation.min, max = operation.max;
 	let minClientWidth, maxClientWidth;
 	let done = false;
 	let success = false;
@@ -152,27 +155,27 @@ function ftw_fit_binary_search (el, operation, targetWidth) {
 		}
 	}
 
-	let val;
+	// the binary search
 	while (!done) {
 
-		val = 0.5 * (min+max);
+		let val = 0.5 * (min+max);
 		operation.bsFunction(el, val, operation); // set the CSS
-
-		let diff = el.clientWidth - targetWidth;
+		let diff = el.clientWidth - targetWidth; // are we under or over?
 		if (diff <= 0) {
-			if (diff > -operation.maxDiff) { // SUCCESS: <maxDiff (iterations=" + iterations + ")
+			if (diff > -operation.maxDiff) { // SUCCESS: <maxDiff
+				console.log ("success, diff="+diff);
 				success = true;
 				done = true;
 			}
 			else
-				min = val; // binary search, too low
+				min = val; // we guessed too low
 		}
 		else
-			max = val; // binary search, too high
+			max = val; // we guessed too high
 
 		// next iteration
 		iterations++;
-		if (iterations >= operation.maxIterations) { // FAIL: wght did not converge (diff=" + diff +",iterations=" + iterations +")
+		if (iterations >= operation.maxIterations) { // FAIL: wght did not converge
 			done = true;
 			if (diff>0) // better to leave the element at minWdth rather than > targetWidth
 				operation.bsFunction(el, min, operation);
@@ -194,6 +197,7 @@ function ftw_fit_ligatures (el, config) {
 	// EXPERIMENTAL
 	// * to reduce width, should turn on ligatures
 	// * to increase width, should turn off ligatures
+	// * for both, should check the effect on width
 	// * should really add these to any existing settings using getComputedStyle
 	// Good candidate string: "VAMPIRE HELL" set in Skia
 }
